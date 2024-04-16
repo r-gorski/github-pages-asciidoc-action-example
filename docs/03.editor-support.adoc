@@ -1,0 +1,73 @@
+
+// Empty line in the 1st line obligatory, to avoid merging with the previous section
+[[book-editor-support]]
+== Editor support
+Since Asciidoc is plain text, it may be edited with any text editor.
+But there are some editors that make your life easier.
+
+
+[[book-editor-support-vs-code]]
+=== Visual Studio Code
+_Visual Studio Code_ is free and multiplatform.
+There are extensions that may help you.
+
+Install the `AsciiDoc` extension by João Pinto::
++
+--
+. Expand the _Extensions_ panel on the left side
+. Search for _AsciiDoc_
+. Install the `AsciiDoc` extension by João Pinto - this is the best one
+
+This extension does syntax highlighting and provides live preview of your document on a dedicated panel (kbd:[Ctrl+Shift+V])
+--
+
+
+Install the `Spell Right` extension by Bartosz Antosik::
++
+--
+This extension automatically checks your spelling as you type, gives spelling correction hints, underlines spelling mistakes.
+
+. Expand the _Extensions_ panel on the left side
+. Search for _Spell Right_
+. Install the _Spell Right_` extension by Bartosz Antosik
+--
+
+
+[TIP]
+.Disable word-wrapping in your editor when working with tables
+======
+TIP: When working with tables, it is advised to turn off word wrapping.
+This may be achieved using:
+
+* kbd:[Alt+Z] (_Windows_)
+* menu:View[Toggle Word Wrap]
+======
+
+
+
+
+
+[[book-editor-support-atom]]
+=== Atom
+Install package `asciidoc-assistant` - this is a meta-package that installs several packages at once:
+
+. `language-asciidoc`
+. `asciidoc-preview`
+. `autocomplete-asciidoc`
+. `asciidoc-image-helper`
+
+Enjoy.
+
+
+
+
+[[book-editor-support-notepadpp]]
+=== Notepad++
+Follow the instructions at https://github.com/edusantana/asciidoc-highlight
+
+That is:
+
+. Download file: https://github.com/edusantana/asciidoc-highlight/raw/master/notepad%2B%2B/userDefineLang.xml
+. Import it as new Highlight definition: menu: Language -> Define your language .. -> Import
+
+Enjoy.

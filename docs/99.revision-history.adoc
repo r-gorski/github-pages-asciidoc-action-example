@@ -1,0 +1,15 @@
+
+// Empty line in the 1st line obligatory, to avoid merging with the previous section
+[[book-doc-revision-history]]
+== Revision History
+
+[options="header", cols="^2,^3,5,12"]
+.History of changes in the document
+|===
+| Version   | Date          | Author                    | Description of changes
+| 0.1       | 2024-04-15    | John Doe                  | Initial Version
+| 1.0       | 2024-04-16    | Jan Kowalski              | Major document rewrite
+|===
+
+
+[[book-doc-revision-history-source]]

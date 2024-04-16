@@ -1,0 +1,725 @@
+
+// Empty line in the 1st line obligatory, to avoid merging with the previous section
+[[book-asciidoc-syntax]]
+== AsciiDoc syntax
+The contents of a typical book are as follows:
+
+AsciiDoc manuals on the web::
+* https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[AsciiDoc Syntax Quick Reference - press *view result* for each sample]
+* https://asciidoctor.org/docs/user-manual/[Asciidoctor User Manual]
+* https://asciidoctor.org/docs/asciidoc-writers-guide/[AsciiDoc Writer’s Guide]
+* https://powerman.name/doc/asciidoc[AsciiDoc cheatsheet]
+* https://mrhaki.blogspot.com/search/label/Awesome%3AAsciidoctor[Awesome Asciidoctor] - Excellent FAQ, questions at the bottom
+
+
+
+[[book-asciidoc-syntax-doc-index]]
+=== Document index
+This is the document starting point, it contains document *metadata* and includes other files, which usually represent chapters.
+By convention we start our documents with the `00.index.adoc` file.
+
+.Sample _00.index.adoc_ document
+[source,asciidoc,indent=0]
+----
+    = Document-Title: Document-Subtitle
+    Author(s)
+    :revnumber: v1.0.0
+    :revdate: 2024-04.28
+    :imagesdir: img                                             <1>
+    :themedir: {docdir}//asciidoc-theme                         <2>
+    :sectnums:
+    :toc:                                                       <3>
+    :toclevels: 3                                               <4>
+    :title-logo-image: image:{docdir}/img/inetum-logo.png[pdfwidth=10cm,align=center]
+    :lang: en                                                   <5>
+    include::{themedir}/settings.adoc[]                         <6>
+    include::{themedir}/locale/attributes.adoc[]                <7>
+
+    // included chapters                                        <8>
+    include::01.introduction.adoc[]                             <9>
+    include::02.other-document.adoc[]
+----
+<1> Subfolder where the converters look for references images, here `img`
+<2> Pointer to theme folder, to be used later to reference other files, e.g. _title-logo-image_
+<3> Generate Table of Contents
+<4> Table of Contents to contain 3 levels
+<5> Language to be used when generating static labels, important for locale - see (7)
+<6> Include settings common to all documents, to change them in single place, e.g. code formatting
+<7> Include language specific labels - see `:lang:` in (5)
+<8> Comment within Asciidoc contents
+<9> Include a file, here it's _01.introduction.adoc_
+
+NOTE: Document metadata are defined line-by-line, they cannot be separated by an empty line.
+In the example above _metadata_ definition spans until including attributes (7), then other document content files are included.
+
+
+
+[[book-asciidoc-syntax-doc-version]]
+=== Updating document version
+Generated documents contain the version (revision) number on the 1st page and on further page footers.
+This is controlled by the `:revnumber:` variable defined in your index file (see the section above).
+
+.Update revision number on document update
+NOTE: Please remember to update the `:revnumber:` when applying changes to the document, keep it in sync with revision history.
+
+
+
+[[book-asciidoc-syntax-doc-nest]]
+=== Document nesting structure
+Asciidoc documents are similar to XML in nature:
+
+* there is root element - which represents the document itself
+* then there are chapters, nested within the document
+* then there may be subchapters, nested, ... - and so on
+
+.Nesting blocks within the document
+[source,asciidoc,indent=0]
+----
+    = Document title: Document subtitle             - Document level
+    == Chapter AAA                                  - 1 Chapter AAA 
+    === Subchapter 1                                - 1.1 Subchapter 1
+    Chapter contents
+    === Subchapter 2                                - 1.2 Subchapter 2
+    ==== Subchapter E                               - 1.2.1 Subchapter E
+    ===== Subchapter X                              - 1.2.1.1 Subchapter X
+    ==== Subchapter S                               - 1.2.2 Subchapter S
+    == Chapter BBB                                  - 2 Chapter BBB
+    === Subchapter 1                                - 2.1 Subchapter 1
+    === Subchapter 2                                - 2.2 Subchapter 2
+    === Subchapter 3                                - 2.3 Subchapter 3
+    == Chapter CCC                                  - 3 Chapter CCC
+----
+
+As the example above shows - each chapter starts with `==`. +
+Each time you nest content deeper - you also add one '=' to it.
+
+
+
+
+[[book-asciidoc-syntax-images]]
+=== Images
+Images may be referenced using the `image::filename[]` syntax.
+Please note the square brackets at the end - they are obligatory. 
+Image reference must start at the beginning of the line, it may be passed additional attributes in the brackets.
+Image may also have optional caption, which must start with dot followed by immediate label.
+
+.Images
+[source,asciidoc,indent=0]
+----
+    image::my-image1.png[]                          <1>
+
+    .Image label                                    <2>
+    image::my-image2.png[pdfwidth=100%]             <3>
+----
+<1> Image referenced, it is resolved against the _img_ directory (the _:imagesdir:_ variable)
+<2> Label of the second image, a dot followed by label (no space)
+<3> Second image referenced, it will be scaled to fit 100% of its block width
+
+.My image does not convert!
+TIP: When you export an image out of Microsoft Word - e.g. a PNG file - it may save it as interlaced image.
+What if _asciidoctor_ complains about it? +
+Open the image in Microsoft Paint and just Save it. That's it! Now it is a standard PNG file ;)
+
+
+
+
+[[book-asciidoc-syntax-cross-ref]]
+=== Cross-references
+It is worth noting that chapters may be assigned identifiers - unique within the document - 
+and these may later be used as a reference from other part of the same document, may link to it.
+
+References defined in double square bracket, identifiers cannot contain spaces.
+
+When you want to use that reference later, you use the same identifier surrounded by double triangular bracket.
+
+.Cross-rederences
+[source,asciidoc,indent=0]
+----
+    [[some-chapter-id]]
+    == Some chapter
+
+    [[some-other-chapter-id]]
+    == Some other chapter
+    From this chapter we want to reference the <<some-chapter-id>> chapter.
+    We may also override the name when referencing it - <<some-chapter-id, our own ref name>>.
+----
+
+
+
+[[book-asciidoc-syntax-links]]
+=== Links
+Two basic types of links are:
+
+* external links - these are typed as full URLs and the caption followed in square brackets
+* cross-references - identifiers within triangle brackets
+
+
+.Links
+[source,asciidoc,indent=0]
+----
+    Text with a https://google.com link                                 <.>
+    Text with a https://google.com[Google] link                         <.>
+
+    Text with a cross-reference to <<some-id>>                          <.>
+    Text with a cross-reference to <<some-id, with custom label>>       <.>
+----
+<.> URL without label, the link will use the URL as label
+<.> URL with custom label - here _Google_
+<.> Cross-reference without custom label, it will use the referenced chapter label
+<.> Cross-reference with custom label - here _with custom label_
+
+
+
+
+[[book-asciidoc-syntax-labels]]
+=== Labels
+Several types of objects - e.g. images, tables, source code blocks - may be assigned labels. +
+Labels are automatically numbered. +
+Labels are defined as a _dot_ that must start at the beginning of the line, followed by the label text (no space after the dot).
+
+.Labels
+[source,asciidoc,indent=0]
+----
+    .Some label
+    image::my-image.png[]
+
+    .Some table label
+    |===
+    | Some table cell | Some other cell
+    |===
+
+    .Source code label for an SQL block
+    [source,sql,indent=0]
+    ----
+    select firstName, lastName from someTable
+    ----
+----
+
+
+
+
+[[book-asciidoc-syntax-tables]]
+=== Tables
+
+[TIP]
+.Disable word-wrapping in your editor
+======
+Work with large tables may be tricky to work with, especially tables with many columns or wide content.
+Therefore it is advised to turn off _word wrapping_ in your editor.
+
+If you are using _Visual Studio Code_ - word wrapping may be toggled using:
+
+* kbd:[Alt+Z]
+* menu:View[Toggle Word Wrap]
+======
+
+Basic table syntax::
++
+--
+[source,asciidoc,indent=0]
+----
+    |===
+    | Cell1.1     |   Cell1.2   | Cell1.3
+    | Cell2.1     |   Cell2.2   | Cell2.3
+    |===
+----
+--
+
+
+Header row, column width applied with custom align::
++
+--
+[source,asciidoc,indent=0]
+----
+    [options="header", cols=">2,^2,5"]              <.>
+    |===
+    | Cell1.1     |   Cell1.2   | Cell1.3           <.>
+    | Cell2.1     |   Cell2.2   | Cell2.3           <.>
+    |===
+----
+<.> Table options defined. `header` means that the 1st row will be a header row (special formatting).
+There are 3 cols each with some width (here 9 in total) - that defines column width proportions, here: `2/9`, `2/9`, `5/9`.
+The 1st column will be right-aligned and the 2nd column will be centered
+<.> The 1st row, it will be rendered as the header row (options="header")
+<.> Normal content row
+--
+
+
+Colspan and rowspan::
++
+--
+TIP: Table rows do not have to be defined in a single row, in fact *columns may be spread across several rows*.
+It is the `|` character that determines that a new cell starts.
+And it is your responsibility to know where a next row starts - may be tricky when using colspan and rowspan.
+
+
+[source,asciidoc,indent=0]
+----
+    |===
+    2+| Cell1.1                 | Cell1.3           <.>
+    | Cell2.1     | Cell2.2     | Cell2.3
+    | Cell3.1     .3+| Cell3.2  | Cell3.3           <.>
+    | Cell4.1                   | Cell4.3
+    | Cell5.1                   | Cell5.3
+    |===
+----
+<.> The 1st cell is using colspan=2
+<.> this cell is using rowspan=3
+
+For more details visit https://mrhaki.blogspot.com/2014/12/awesome-asciidoctor-span-cell-over-rows.html[Awesome Asciidoctor: Span Cell over Rows and Columns].
+You may find complex table examples in this repository, eg. in `docs/Formal-Documents/DOC-Migration-Baseline-Configuration-039741`
+--
+
+
+Formatting cell content::
+Table cell may contain formatted content, including complex lists, images or even nested tables.
+To do so, the cell with the content ust be marked with `a|` instead of standard '|'.
++
+--
+[source,asciidoc,indent=0]
+----
+    |===
+    | Cell1.1   | Cell1.2   | Cell1.3
+
+    | Cell2.1   a| Cell2.2 content                  <.>
+
+            * including some nested list            <.>
+            * with multiple items
+            ** sometimes nested
+                            | Cell2.3 content       <.>
+
+    | Cell3.1   | Cell3.2   | Cell3.3               <.>
+    |===
+----
+<.> Cell 2.2 may contain styled content
+<.> That content may span several lines, e.g. the unordered list
+<.> Then the next cell appears, as shown above - it is ok to have it indented to ease visual representation for the future editor
+<.> And the next row starts normally
+--
+
+
+
+
+[[book-asciidoc-syntax-source-code]]
+=== Source code
+Asciidoc supports source code formatters.
+This document uses the `rouge` code formatter - see https://github.com/rouge-ruby/rouge/wiki/List-of-supported-languages-and-lexers[list of supported formats].
+
+To format some source code block, please define a _source_ block and define which format to use, e.g. `sql`, `java`, `yml`, `console`, `text`, etc
+
+[source,asciidoc,indent=0]
+----
+    .Code block label
+    [source,yml,indent=0]
+    ----
+    vars:
+        http_port: 80
+        max_clients: 200
+    remote_user: root
+    tasks:
+    - name: ensure apache is at the latest version
+        yum:
+        name: httpd
+        state: latest
+    ----
+----
+
+Available highlighter options:
+
+* abc
+* asn1
+* asp
+* ats
+* awk
+* actionscript
+* ada
+* agda
+* alertindent
+* apache
+* bash
+* bibtex
+* boo
+* c
+* cs
+* cpp
+* cmake
+* css
+* changelog
+* clojure
+* coffee
+* coldfusion
+* commonlisp
+* curry
+* d
+* dtd
+* default
+* diff
+* djangotemplate
+* dockerfile
+* doxygen
+* doxygenlua
+* eiffel
+* elixir
+* elm
+* email
+* erlang
+* fsharp
+* fortran
+* gcc
+* glsl
+* gnuassembler
+* m4
+* go
+* html
+* hamlet
+* haskell
+* haxe
+* ini
+* isocpp
+* idris
+* fasm
+* nasm
+* j
+* json
+* jsp
+* java
+* javascript
+* javascriptreact
+* javadoc
+* julia
+* kotlin
+* llvm
+* latex
+* lex
+* lilypond
+* literatecurry
+* literatehaskell
+* lua
+* mips
+* makefile
+* markdown
+* mathematica
+* matlab
+* maxima
+* mediawiki
+* metafont
+* modelines
+* modula2
+* modula3
+* monobasic
+* mustache
+* ocaml
+* objectivec
+* objectivecpp
+* octave
+* opencl
+* php
+* povray
+* pascal
+* perl
+* pike
+* postscript
+* powershell
+* prolog
+* protobuf
+* pure
+* purebasic
+* python
+* qml
+* r
+* relaxng
+* relaxngcompact
+* roff
+* ruby
+* rhtml
+* rust
+* sgml
+* sml
+* sql
+* sqlmysql
+* sqlpostgresql
+* scala
+* scheme
+* stata
+* tcl
+* tcsh
+* texinfo
+* mandoc
+* typescript
+* vhdl
+* verilog
+* xml
+* xul
+* yaml
+* yacc
+* zsh
+* dot
+* noweb
+* rest
+* sci
+* sed
+* xorg
+* xslt
+
+
+[NOTE]
+.Where does the list above come from?
+======
+We are using both `asciidoctor` (pdf, html, docbook) and pandoc (docx) for document generation.
+
+List of formats comes from:
+
+* asciidoctor: https://pygments.org/languages/  ( one of highlighters used by asciidoctor )
+* pandoc: *docker run --rm pandoc/core --list-highlight-languages*
+======
+
+
+
+[[book-asciidoc-syntax-page-flow]]
+=== Controlling page flow
+Page flow may be controlled with requests to:
+
+* force a page break - use `<<<` marker at the beginning of a line, surrounded with empty lines
+* change page orientation to `landscape` (e.g. when working with wide tables)
+* return back to `portrait` page orientation
+
+[source,asciidoc,indent=0]
+----
+    Some content
+
+    <<<                                                         <.>
+
+    == Chapter after a page break
+
+    // Switch the page layout to landscape for wide tables
+    [.landscape]                                                <.>
+    <<<
+ 
+    Some wide content, it will start on the next page, landscape layout.
+    This switch is permanent and you need to ask it to go back to _portrait_ if needed
+
+
+    // Switch back to portrait for further pages                <.>
+    [.portrait]
+    <<<
+
+    Some further content, it will start on the next page
+----
+<.> Force page break
+<.> Change page orientation to _landscape_. It must be followed by page break. The landscape will start on the next page
+<.> Change back to portrait. The next page will be in portrait mode.
+
+
+
+
+[[book-asciidoc-syntax-footnotes]]
+=== Footnotes
+You may use footnotes in your content by using `footnote:[Footnote text]`. 
+It will render a numbered linked item next to the text and the footnote text below the block.
+
+[source,asciidoc,indent=0]
+----
+    Some text. footnote:[Footnote text]                                         <.>
+    Some other text. footnote:[`John` - this section needs production data]     <.>
+----
+<.> A footnote with _Footnote text_ label to be rendered at the bottom of the block
+<.> Another footnote example, some styling applied
+
+
+
+
+[[book-asciidoc-syntax-comments]]
+=== Comments
+You may add comments to your Asciidoc content.
+Comments start with two slashes (`//`) - the text to the end of the line will then be ignored by the parser.
+
+
+
+[[book-asciidoc-syntax-blocks]]
+=== Blocks
+Everything in Asciidoc is a block.
+This is the most fundamental concept here.
+
+[source,asciidoc,indent=0]
+----
+    Some text.
+    And some othe text, but it is part of the same block.
+
+    This is some other block, because there was an empty line to start a new block  <.>
+
+    And a new block.
+
+    Blocks are extremely useful to indent content within various list types, e.g.
+
+    * some unordered item                                                           <.>
+    +                                                                               <.>
+    --                                                                              <.>
+    And you want an image                                                           <.>
+    image::image-name.png[]
+
+    and a code block nested within the same list item
+
+    [source,sql,indent=0]
+    ----
+    select x,y from z
+    ----
+    --                                                                              <.>
+
+    * continue the list outside of the block                                        <.>
+    ** deeper nest
+----
+<.> New block, since there was an empty line before it
+<.> Start a list, and you want to have some content _nested within_ that block (indented)
+<.> This `+` sign means that you want to continue the existing block with another one
+<.> Declare a new block with double dash - `--`
+<.> Put any content inside: text, images, other lists, admonitions, code blocks, ...
+<.> Finish the lock with double dash - `--`
+<.> Start another list, at the same level as the one on top
+
+
+
+
+[[book-asciidoc-syntax-lists]]
+Lists::
+Lists may be numbered and un-numbered, they may also be nested.
+It is important to know that lists imply a _block_ and a list MUST start with a blank line, otherwise they will not format correctly.
+
+[source,asciidoc,indent=0]
+----
+    Computer hardware examples:
+    * HDD (Hard drives)                             <.>
+    * CD/DVD/BlueRay players
+
+
+    Computer hardware examples:
+
+    * HDD (Hard drives)                             <.>
+    * CD/DVD/BlueRay players
+----
+<.> This list will not render correctly, as there is no empty line at the start of a list. The parser will treat it normal text.
+<.> This list will be started correctly, the empty line indicates it is a new block and parser will recognize a list
+
+
+For more information on lists please visit Asciidoc manuals:
+
+* https://asciidoctor.org/docs/user-manual/#unordered-lists[unordered lists]
+* https://asciidoctor.org/docs/user-manual/#ordered-lists[ordered lists]
+
+
+
+
+
+[[book-asciidoc-syntax-admonitions]]
+Admonitions::
+There are 5 predefined admonitions that may be used within your content. +
+See https://asciidoctor.org/docs/user-manual/#admonition[admonition manual] for detail.
+
+Admonition types:
+
+* NOTE
+* TIP
+* IMPORTANT
+* CAUTION
+* WARNING
+
+.Example TIP admonition
+TIP: Hi, I am your TIP admonition
+
+Admonitions support two types of declarations:
+
+* *Simple syntax* - for simple text blocks, often single sentences
++
+[source,asciidoc,indent=0]
+----
+    .Optional title
+    NOTE: This is some note
+
+
+    IMPORTANT: Some important note +
+    spread in 2 lines
+----
+
+* *Complex syntax* - usable when you want to have complex lock in the admonition, e.g. images, lists, code blocks, etc.
++
+[source,asciidoc,indent=0]
+----
+    [TIP]
+    .Optional admonition tip label
+    ======
+    Complex block within admonition that may use
+
+    * lists
+    ** with nesting, etc
+    ======
+----
+
+
+[[book-asciidoc-syntax-play-colors]]
+=== Playing with colors
+Sometimes you want to change color of some text or highlight it.
+To do so, you need to use _roles_, as they are defined in the theme.
+
+The standard roles defined are:
+
+* line-through
+* underline
+* big
+* small
+* yellow-background - highlights the text in yellow
+* red - apply text color
+* green - apply text color
+* blue - apply text color
+* yellow - apply text color
+
+You may apply more than one role at a time. +
+The syntax is to define the roles to use in square brackets and surround the text with #. +
+
+.Sample colors
+[source,asciidoc,indent=0]
+----
+    This [red]#text# has [underline yellow-background]#been edited with# some +
+    styling [blue line-through]#plays in# mind
+----
+
+which results in +
+
+This [red]#text# has [underline yellow-background]#been edited with# some +
+styling [blue line-through]#plays in# mind.
+
+
+
+
+
+[[book-asciidoc-syntax-icons]]
+=== Using icons
+You may use _font-awesome_ icons in your documents.
+
+Their usage is simple: `\icon:icon-name[]`  - note the square brackets at the end.
+
+Some useful basic icons:
+
+* \icon:arrow-right[] - icon:arrow-right[]
+* \icon:database[] - icon:database[]
+* \icon:server[] - icon:server[]
+* \icon:desktop[] - icon:desktop[]
+* \icon:code-branch[] - icon:code-branch[]
+* \icon:chart-pie[] - icon:chart-pie[]
+* \icon:chart-bar[] - icon:chart-bar[]
+
+For more icons - and their codes - search https://fontawesome.com/icons?d=gallery&m=free
+
+These icons are coded into a font which is distributed with asciidoctor, the converter does not download any content from the net.
+
+
+
+[[book-asciidoc-syntax-format-tips]]
+=== Other formatting tips
+Formatting tips that you may find handy:
+
+* use ` +` (space +) at the end of a line to force line break. +
+By default text within single block is continued in the same line, even if it resides in the next line.
+
+* use `+` to connect two blocks (see the tip above). The '+' must be at the beginning of a line
+* use `\kbd:[key]` to render a keyboard shortcut,e.g. `\kbd:[Alt+Z]` to render kbd:[Alt+Z]
+* use `\menu:top-menu[menu1 > menu2]` to render a menu, +
+e.g. `\menu:View[Toolbars > Font panel]` to render menu:View[Toolbars > Font panel]

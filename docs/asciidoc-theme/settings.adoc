@@ -1,0 +1,14 @@
+// Settings common across all books that include this file
+:doctype: book
+:experimental:
+:reproducible:
+:encoding: utf-8
+:pdf-page-size: A4
+:icons: font
+:icon-set: fa
+:source-highlighter: rouge
+:rouge-style: gruvbox
+//:rouge-style: molokai
+:autofit-option:
+// diagram out dir, important for plantuml diagrams
+:imagesoutdir: img

@@ -1,0 +1,16 @@
+
+// Empty line in the 1st line obligatory, to avoid merging with the previous section
+[[asciidoc-manual-intro]]
+== Introduction
+This document has been created to describe how to work with `Asciidoc` documents.
+
+[[asciidoc-manual-intro-folder-struct]]
+=== Folder structure
+
+`docs`/`asciidoc-theme`/::
+This folder contains the layout themes that define the generated book contents. +
+
+
+`docs`/::
+This is where asciidoc contents are stored. +
+

@@ -1,0 +1,204 @@
+
+// Empty line in the 1st line obligatory, to avoid merging with the previous section
+[[book-doc-generation-setup]]
+== Generating documents using asciidoctor
+Although it is possibly to install _asciidoctor-pdf_ on your machine with all dependencies (ruby + several gems),
+the easiest approach is to use its Docker `docker-asciidoctor` image.
+
+[[book-doc-generation-setup-docker-win10]]
+=== Setup Docker for Windows 10
+IMPORTANT: Please use Docker version *2.2.0.3* or newer!
+Previous Docker versions had notorious problems with sharing files between the host and guest systems.
+
+. *Download the Docker installer* +
+  https://docs.docker.com/docker-for-windows/install/ +
+  It lists the "Download from Docker Hub" link that you need to follow. +
+  This will require a free docker hub account (sign-up if needed). +
+
+. *Run the installer* - just use defaults. +
+   At the end it informs it need to logout - *if you press OK - IT WILL LOGOFF WITHOUT ASKING*!!!
+
+. *Share your local Drive with your Docker images*
++
+--
+NOTE: It is necessary to share your drive with your docker image, 
+so that your _*.adoc_ files residing on _your_ drive are accessible to your _docker-asciidoctor_ image.
+
+. Open Docker Settings (system tray icon)
+. Resources icon:arrow-right[] FILE-SHARING
+. Check the drive you want to share
++
+---
+.Share your drive
+image::docker-share-drive.png[pdfwidth=100%]
+---
+
+. Press `Apply & restart`
+--
+
+
+
+
+[[book-doc-generation-pull-images]]
+=== Keep your docker-asciidoctor up to date
+_Asciidoctor_ is an actively developed project and it gets releases every few months,
+therefore it is worth to upgrade the docker image from time to time.
+
+You may do this from a command line using `dockey pull` and `docker images commands`.
+
+.Update docker image for asciidoctor
+[source,console,indent=0]
+----
+> docker pull asciidoctor/docker-asciidoctor                                         <.>
+Using default tag: latest
+latest: Pulling from asciidoctor/docker-asciidoctor
+
+> docker images asciidoctor/docker-asciidoctor                                       <.>
+REPOSITORY                        TAG       IMAGE ID       CREATED        SIZE
+asciidoctor/docker-asciidoctor    latest    0c383e26e3d9   3 days ago     428MB      <.>
+asciidoctor/docker-asciidoctor    <none>    cde13a529c5f   5 months ago   419MB      <.>
+----
+<.> Pull the latest `asciidoctor/docker-asciidoctor` image. It will automatically build a new one if finds a new one
+<.> List `asciidoctor/docker-asciidoctor` images on your machine
+<.> This is the latest one, this one will be executed
+<.> Some older one, 5 months old
+
+
+
+
+[[book-doc-generation-execute-shell]]
+=== Running docker-asciidoctor
+You will use a dedicated `asciidoctor/docker-asciidoctor` docker image to generate documents.
+
+.The `/documents` folder
+NOTE: It is important to note that _docker-asciidoctor_ expects that the documents to be converted are nested within the `/documents` folder and it must be mounted upon starting the docker image - the host system directory needs to be provided.
+
+You may interact with asciidoctor in two ways:
+
+Interactive shell::
+. You first run a command to run the docker image and open its own command line
+. Then you may execute `asciidoctor` specific commands
+
++
+--
+
+.Example
+[source,console,indent=0]
+----
+docker run -it -v <your directory>:/documents/ asciidoctor/docker-asciidoctor    <.>
+
+asciidoctor-pdf <document-to-convert-within-documents-folder>                    <.>
+----
+<.> Run the `asciidoctor/docker-asciidoctor` image in interactive mode (-it) +
+then mount <your directory> as `/documents` (-v)
+<.> Execute the `asciidoctor-pdf` command within the docker console to perform conversion
+
+
+
+.Example converting a document inside the `c:\Proj\ASCIIDOC-ROOT` folder
+[source,console,indent=0]
+----
+docker run -it -v c:\Proj\ASCIIDOC-ROOT:/documents/ asciidoctor/docker-asciidoctor <.>
+
+asciidoctor-pdf docs/Manuals/asciidoc-toolset-manual/index.adoc                    <.>
+----
+<.> Mount 'c:\Proj\ASCIIDOC-ROOT' as `/documents` for the image
+<.> Convert the `/documents`/docs/Manuals/asciidoc-toolset-manual/index.adoc file
+--
+
+Batch mode::
+This is useful for invoking conversion from a script. +
+Docker is invoked in a single line, together with the command to be executed inside the image.
++
+--
+
+.Sample `generate-pdf.bat` script doing PDF conversion
+[source,powershell,indent=0]
+----
+@ECHO OFF
+SET doc_root_dir=%cd%
+SET file_to_convert=./docs/manuals/asciidoc-manual/00.index.adoc
+SET pdf_switches=-a pdf-stylesdir=./asciidoc-theme/themes -a pdf-style=framework -a pdf-fontsdir=./asciidoc-theme/fonts
+
+@ECHO ON
+docker run --rm -v %doc_root_dir%:/documents/ asciidoctor/docker-asciidoctor asciidoctor-pdf %pdf_switches% %file_to_convert%
+----
+--
+
+
+[[book-doc-generation-pdf]]
+=== Generating PDF documents
+
+NOTE: The script below assumes it is executed in the 'ASCIIDOC-ROOT' folder, as it expects to convert './docs/manuals/...' file relative to it.
+
+.Sample `generate-pdf.bat` script to generate PDF output
+[source,powershell,indent=0]
+----
+@ECHO OFF
+SET doc_root_dir=%cd%
+SET file_to_convert_dir=./docs/Manuals/asciidoc-manual
+SET file_to_convert=%file_to_convert_dir%/00.index.adoc
+SET out_file=%file_to_convert_dir%/asciidoc-manual.pdf
+SET pdf_switches=-a pdf-stylesdir=./asciidoc-theme/themes -a pdf-style=framework -a pdf-fontsdir=./asciidoc-theme/fonts
+
+@ECHO ON
+docker run --rm -v %doc_root_dir%:/documents/ asciidoctor/docker-asciidoctor asciidoctor-pdf %pdf_switches% %file_to_convert% -o %out_file%
+----
+
+The script above:
+
+* prepares some variables to keep the invocation clean
+* runs
+** the 'asciidoctor/docker-asciidoctor' docker image
+** in batch mode (--rm)
+** mounting local '%doc_root_dir%' as '/documents/' in the executed docker image
+** then executes the 'asciidoctor-pdf' inside the image
+** and passes it parameters, here '%pdf_switches% %file_to_convert% -o %out_file%'
+
+
+.Custom PDF generation theme
+NOTE: The 'pdf_switches' arguments point to the `./asciidoc-theme/themes/framework-theme.yml` file for styling definition. +
+If you want to use another theme, create your `my-custom-theme.yml` file in the same directory and change the 'pdf-style' parameter
+to point to your style. +
+In this case: `pdf-style=my-custom`. +
+Details at https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc
+
+
+[[book-doc-generation-html]]
+=== Generating HTML documents
+
+.Sample `generate-pdf.bat` script to generate HTML output
+[source,powershell,indent=0]
+----
+@ECHO OFF
+SET doc_root_dir=%cd%
+SET file_to_convert=./docs/manuals/asciidoc-manual/00.index.adoc
+SET html_switches=-b xhtml5
+
+@ECHO ON
+docker run --rm -v %doc_root_dir%:/documents/ asciidoctor/docker-asciidoctor asciidoctor %html_switches% %file_to_convert%
+----
+
+It is the `asciidoctor` command (not _asciidoctor-pdf_ as in the PDF example) that actually runs the conversion. +
+Please note the `html_switches` variable that tells asciidoctor to generate `xhtml5` output.
+
+TIP: Type `asciidoctor --help` in interactive mode to get a list of possible command line switches.
+
+
+
+
+[[book-doc-generation-docbook5]]
+=== Generating DocBook5 documents
+The `docbook5` content generation is almost the same as `xhtml5` output - he difference is only in the command line switch that determines output.
+
+.Sample `generate-docbook.bat` to generate a DocBook5 document
+[source,powershell,indent=0]
+----
+@ECHO OFF
+SET doc_root_dir=%cd%
+SET file_to_convert=./docs/manuals/asciidoc-manual/00.index.adoc
+SET html_switches=-b docbook5
+
+@ECHO ON
+docker run --rm -v %doc_root_dir%:/documents/ asciidoctor/docker-asciidoctor asciidoctor %html_switches% %file_to_convert%
+----
