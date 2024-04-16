@@ -24,9 +24,11 @@ jobs:
   adoc_build:
     runs-on: ubuntu-latest
     name: build HTML with asciidoctor
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
     - name: Get build container
       id: adocbuild
       uses: tonynv/asciidoctor-action@master
@@ -39,7 +41,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-          path: '.'
+          path: './docs'
+
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
