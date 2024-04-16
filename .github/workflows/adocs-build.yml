@@ -10,18 +10,20 @@ jobs:
     name: asciidoctor -D docs --backend=html5 -o index.html -a toc2 docs/00.index.adoc
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Get build container
       id: adocbuild
       uses: tonynv/asciidoctor-action@master
       with:
           program: "asciidoctor -D docs --backend=html5 -o index.html docs/00.index.adoc"
-    - name: Print execution time
-      run: echo "Time ${{ steps.adocbuild.outputs.time }}"
-    - name: Deploy docs to ghpages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        publish_branch: gh-pages
-        publish_dir: ./
 
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+          path: '.'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
