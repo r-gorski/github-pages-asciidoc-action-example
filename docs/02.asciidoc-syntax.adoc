@@ -1,5 +1,9 @@
 
 // Empty line in the 1st line obligatory, to avoid merging with the previous section
+:docdir: .
+:imagesdir: {docdir}/img
+:themedir: {docdir}/asciidoc-theme
+
 [[book-asciidoc-syntax]]
 == AsciiDoc syntax
 The contents of a typical book are as follows:
@@ -26,11 +30,11 @@ By convention we start our documents with the `00.index.adoc` file.
     :revnumber: v1.0.0
     :revdate: 2024-04.28
     :imagesdir: img                                             <1>
-    :themedir: {docdir}//asciidoc-theme                         <2>
+    :themedir: {docdir}/asciidoc-theme                          <2>
     :sectnums:
     :toc:                                                       <3>
     :toclevels: 3                                               <4>
-    :title-logo-image: image:{docdir}/img/inetum-logo.png[pdfwidth=10cm,align=center]
+    :title-logo-image: image:{imagesdir}/inetum-logo.png[pdfwidth=10cm,align=center]
     :lang: en                                                   <5>
     include::{themedir}/settings.adoc[]                         <6>
     include::{themedir}/locale/attributes.adoc[]                <7>

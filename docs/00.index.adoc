@@ -1,20 +1,22 @@
-= Using AsciiDoc for document creation: AsciiDoc guide
-The Team
-:revnumber: v1.3.3
-:revdate: 2024-04-16
+:revnumber: 0.1.1
+:revdate: 2024-04-18
 :description: Introduction to AsciiDoc
-:imagesdir: img
-:sourcedir: src
-:themedir: {docdir}/asciidoc-theme
 :sectnums:
 :toc:
 :toclevels: 3
-:title-logo-image: image:{docdir}/img/inetum-logo.png[pdfwidth=10cm,align=center]
 :lang: en
+:docdir: .
+:imagesdir: {docdir}/img
+:themedir: {docdir}/asciidoc-theme
+
 // settings - common settings shared across all books
 include::{themedir}/settings.adoc[]
 // attributes - :lang: specific labels in generated books
 include::{themedir}/locale/attributes.adoc[]
+
+image::{imagesdir}/inetum-logo.png[pdfwidth=10cm,align=left]
+
+= Using AsciiDoc for document creation: AsciiDoc guide
 
 // ======================================================================================
 

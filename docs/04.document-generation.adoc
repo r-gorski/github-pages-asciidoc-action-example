@@ -1,5 +1,9 @@
 
 // Empty line in the 1st line obligatory, to avoid merging with the previous section
+:docdir: .
+:imagesdir: {docdir}/img
+:themedir: {docdir}/asciidoc-theme
+
 [[book-doc-generation-setup]]
 == Generating documents using asciidoctor
 Although it is possibly to install _asciidoctor-pdf_ on your machine with all dependencies (ruby + several gems),
@@ -30,7 +34,7 @@ so that your _*.adoc_ files residing on _your_ drive are accessible to your _doc
 +
 ---
 .Share your drive
-image::docker-share-drive.png[pdfwidth=100%]
+image::{imagesdir}/docker-share-drive.png[pdfwidth=100%]
 ---
 
 . Press `Apply & restart`
