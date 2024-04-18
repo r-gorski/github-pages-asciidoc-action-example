@@ -5,9 +5,8 @@
 :toc:
 :toclevels: 3
 :lang: en
-:docdir: .
-:imagesdir: {docdir}/img
-:themedir: {docdir}/asciidoc-theme
+:imagesdir: img
+:themedir: asciidoc-theme
 
 // settings - common settings shared across all books
 include::{themedir}/settings.adoc[]
