@@ -16,7 +16,7 @@ include::{themedir}/locale/attributes.adoc[]
 
 image::{imagesdir}/inetum-logo.png[pdfwidth=10cm,align=left]
 
-= Using AsciiDoc for document creation: AsciiDoc guide
+= Using AsciiDoc: AsciiDoc guide
 
 // ======================================================================================
 
