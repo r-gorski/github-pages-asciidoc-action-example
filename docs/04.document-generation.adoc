@@ -33,7 +33,7 @@ so that your _*.adoc_ files residing on _your_ drive are accessible to your _doc
 +
 ---
 .Share your drive
-image::{imagesdir}/docker-share-drive.png[pdfwidth=100%]
+image::docker-share-drive.png[pdfwidth=100%]
 ---
 
 . Press `Apply & restart`

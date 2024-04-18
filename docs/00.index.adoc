@@ -13,7 +13,7 @@ include::{themedir}/settings.adoc[]
 // attributes - :lang: specific labels in generated books
 include::{themedir}/locale/attributes.adoc[]
 
-image::{imagesdir}/inetum-logo.png[pdfwidth=10cm,align=left]
+image::inetum-logo.png[pdfwidth=10cm,align=left]
 
 = Using AsciiDoc: AsciiDoc guide
 

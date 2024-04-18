@@ -33,7 +33,7 @@ By convention we start our documents with the `00.index.adoc` file.
     :sectnums:
     :toc:                                                       <3>
     :toclevels: 3                                               <4>
-    :title-logo-image: image:{imagesdir}/inetum-logo.png[pdfwidth=10cm,align=center]
+    :title-logo-image: image:inetum-logo.png[pdfwidth=10cm,align=center]
     :lang: en                                                   <5>
     include::{themedir}/settings.adoc[]                         <6>
     include::{themedir}/locale/attributes.adoc[]                <7>
